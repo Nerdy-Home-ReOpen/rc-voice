@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { electronService } from '@/services/electron.service';
+import React, { useEffect, useState } from 'react';
 
 // CSS
 import styles from '@/styles/common/header.module.css';
@@ -9,15 +10,38 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = React.memo(({ title, onClose }) => {
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
 
-  const handleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
+  useEffect(() => {
+    const handleMaximize = () => setIsMaximized(true);
+    const handleUnmaximize = () => setIsMaximized(false);
+
+    electronService.window.onMaximize(handleMaximize);
+    electronService.window.onUnmaximize(handleUnmaximize);
+
+    return () => {
+      electronService.window.offMaximize(handleMaximize);
+      electronService.window.offUnmaximize(handleUnmaximize);
+    };
+  }, []);
+
+  const handleMinimize = () => {
+    electronService.window.minimize();
+  };
+
+  const handleMaximize = () => {
+    if (isMaximized) {
+      electronService.window.unmaximize();
     } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+      electronService.window.maximize();
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      electronService.window.close();
     }
   };
 
@@ -25,13 +49,13 @@ const Header: React.FC<HeaderProps> = React.memo(({ title, onClose }) => {
     <div className={styles['header']}>
       {title && <div className={styles['title']}>{title}</div>}
       <div className={styles['buttons']}>
-        <div className={styles['minimize']} />
+        <div className={styles['minimize']} onClick={handleMinimize} />
         <div
-          className={isFullscreen ? styles['restore'] : styles['maxsize']}
-          onClick={handleFullscreen}
-          aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          className={isMaximized ? styles['restore'] : styles['maxsize']}
+          onClick={handleMaximize}
+          aria-label={isMaximized ? 'Restore' : 'Maximize'}
         />
-        <div className={styles['close']} onClick={onClose} />
+        <div className={styles['close']} onClick={handleClose} />
       </div>
     </div>
   );

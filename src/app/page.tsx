@@ -32,6 +32,9 @@ import { measureLatency } from '@/utils/measureLatency';
 import { useSocket } from '@/hooks/SocketProvider';
 import Auth from './auth/page';
 
+// Services
+import { electronService } from '@/services/electron.service';
+
 interface HeaderProps {
   selectedId?: number;
   onSelect?: (tabId: number) => void;
@@ -80,6 +83,10 @@ const Header: React.FC<HeaderProps> = React.memo(
         document.exitFullscreen();
         setIsFullscreen(false);
       }
+    };
+
+    const handleMinimize = () => {
+      electronService.window.minimize();
     };
 
     // Menu Control
@@ -276,7 +283,7 @@ const Header: React.FC<HeaderProps> = React.memo(
               </div>
             </div>
           </div>
-          <div className={header['minimize']} />
+          <div className={header['minimize']} onClick={handleMinimize} />
           <div
             className={isFullscreen ? header['restore'] : header['maxsize']}
             onClick={handleFullscreen}

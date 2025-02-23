@@ -3,26 +3,27 @@ import React, {
   ChangeEvent,
   FocusEvent,
   FormEvent,
-  useState,
   useEffect,
+  useState,
 } from 'react';
 
 // CSS
 import styles from '@/styles/loginPage.module.css';
 
 // Utils
-import { validateAccount, validatePassword } from '@/utils/validators';
 import { base64encode } from '@/utils/base64encode';
+import { validateAccount, validatePassword } from '@/utils/validators';
 
 // Services
 import { authService } from '@/services/auth.service';
+import { electronService } from '@/services/electron.service';
 
 // Components
 import InputField from '@/components/InputField';
 
 // Redux
-import store from '@/redux/store';
 import { setSessionToken } from '@/redux/sessionTokenSlice';
+import store from '@/redux/store';
 
 interface FormErrors {
   general?: string;
@@ -167,6 +168,10 @@ const LoginPage: React.FC<LoginPageProps> = React.memo(
       }
     };
 
+    const handleLoginSuccess = () => {
+      electronService.auth.notifySuccess();
+    };
+
     const handleSubmit = async (
       e: FormEvent<HTMLFormElement>,
     ): Promise<void> => {
@@ -197,6 +202,34 @@ const LoginPage: React.FC<LoginPageProps> = React.memo(
 
           if (formData.rememberAccount) {
             localStorage.setItem(STORAGE_KEYS.ACCOUNT, formData.account);
+
+            // 根據用戶選擇保存登入相關設置
+            localStorage.setItem(
+              STORAGE_KEYS.REMEMBER_ACCOUNT,
+              formData.rememberAccount.toString(),
+            );
+            localStorage.setItem(
+              STORAGE_KEYS.AUTO_LOGIN,
+              formData.autoLogin.toString(),
+            );
+
+            if (formData.rememberAccount) {
+              localStorage.setItem(STORAGE_KEYS.ACCOUNT, formData.account);
+            } else {
+              localStorage.removeItem(STORAGE_KEYS.ACCOUNT);
+            }
+
+            // TODO: 應該使用更安全的方式保存密碼
+            if (formData.autoLogin) {
+              localStorage.setItem(
+                STORAGE_KEYS.ENCRYPTED_PASSWORD,
+                encryptPassword(formData.password),
+              );
+            } else {
+              localStorage.removeItem(STORAGE_KEYS.ENCRYPTED_PASSWORD);
+            }
+
+            handleLoginSuccess();
           } else {
             localStorage.removeItem(STORAGE_KEYS.ACCOUNT);
           }

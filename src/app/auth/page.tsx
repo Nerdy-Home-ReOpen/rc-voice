@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
 
 // CSS
 import header from '@/styles/common/header.module.css';
@@ -10,9 +9,8 @@ import header from '@/styles/common/header.module.css';
 import LoginPage from '@/components/pages/LoginPage';
 import RegisterPage from '@/components/pages/RegisterPage';
 
-// Redux
-import store from '@/redux/store';
-import { setSessionToken } from '@/redux/sessionTokenSlice';
+// Services
+import { electronService } from '@/services/electron.service';
 
 interface HeaderProps {
   onClose?: () => void;
@@ -32,19 +30,31 @@ const Header: React.FC<HeaderProps> = React.memo(({ onClose }) => {
     }
   };
 
+  const handleMinimize = () => {
+    electronService.window.minimize();
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      electronService.window.close();
+    }
+  };
+
   return (
     <div className={`${header['header']}`}>
       {/* Title */}
       <div className={header['appIcon']} />
       {/* Buttons */}
       <div className={header['buttons']}>
-        <div className={header['minimize']} />
+        <div className={header['minimize']} onClick={handleMinimize} />
         <div
           className={isFullscreen ? header['restore'] : header['maxsize']}
           onClick={handleFullscreen}
           aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
         />
-        <div className={header['close']} onClick={onClose} />
+        <div className={header['close']} onClick={handleClose} />
       </div>
     </div>
   );
