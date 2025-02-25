@@ -1,0 +1,119 @@
+.label {
+  font-size: 14px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  color: #646464;
+  padding-top: 20px;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.button {
+  font-size: 13px;
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.message {
+  background: #fff8dc;
+  padding: 5px;
+  border: 1px solid #ffd700;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.header {
+  background: #f0f0f0;
+  height: 40px;
+  display: flex;
+}
+
+.headerButton {
+  height: 100%;
+  width: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #a7c0e9;
+}
+
+.headerButton span {
+  font-size: 12px;
+  text-align: center;
+}
+
+.inputBox {
+  font-size: 13px;
+  margin: 5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 2px;
+  margin-top: 2px;
+}
+
+.inputBox .title {
+  font-size: 13px;
+  width: 5rem;
+}
+
+.inputBox .title.impotant:after {
+  content: '*';
+  color: red;
+}
+
+.inputBorder {
+  border: 1px solid #ddd;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: #fff;
+  position: relative;
+  display: inline-block;
+  font-size: 13px;
+  width: 100%;
+}
+
+.inputBorder input,
+.inputBorder textarea {
+  padding: 3px;
+  border: 1px solid #ffffff;
+  outline: none;
+  font-size: 12px;
+  width: 100%;
+  font-family: 'SimSun', sans-serif;
+  background: #fff;
+  color: #000;
+  height: 100%;
+  resize: none;
+}
+
+.changeAvatarWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  height: auto;
+  width: 100%;
+  min-height: 134px;
+}
+
+.changeAvatarPicture {
+  max-height: 100px;
+}
+
+.disabled div,
+.disabled input {
+  color: #8f8f8f;
+  pointer-events: none;
+}

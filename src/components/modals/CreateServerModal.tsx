@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useState, Suspense } from 'react';
 import { useSelector } from 'react-redux';
 
 // Hooks
@@ -10,6 +10,10 @@ import Modal from '@/components/Modal';
 
 // Types
 import { User, Server } from '@/types';
+
+// CSS
+import Popup from '../../styles/common/popup.module.css';
+import CreateServer from '../../styles/createServer.module.css';
 
 // Validation
 export const validateName = (name: string): string => {
@@ -31,10 +35,14 @@ interface FormErrors {
 
 interface CreateServerModalProps {
   onClose: () => void;
+  handleNextCreate: () => void;
 }
 
 const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
   ({ onClose }) => {
+    // Next Page
+    const [serverType, setShowPage] = useState<string | false>(false);
+
     // Redux
     const user = useSelector((state: { user: User | null }) => state.user);
     const sessionId = useSelector(
@@ -107,108 +115,179 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
       reader.readAsDataURL(file);
     };
 
+    const handleNextCreate = (e: any) => {
+      setShowPage(e.currentTarget.textContent);
+    };
+
     const maxGroups = 3;
     const userOwnedServerCount = user?.ownedServers?.length ?? 0;
     const remainingGroups = maxGroups - userOwnedServerCount;
 
-    return (
-      <div className="flex p-4 gap-8">
-        <div className="flex-1">
-          <div className="space-y-6">
-            <div
-              className={`border rounded-lg px-4 py-3 text-sm shadow-sm select-none ${
-                errors.general
-                  ? 'bg-red-50 border-red-200 text-red-800'
-                  : 'bg-yellow-50 border-yellow-200 text-yellow-800'
-              }`}
-            >
-              {errors.general
-                ? errors.general
-                : `您還可以創建${remainingGroups}個群，創建之後不能刪除或轉讓`}
+    const PageComponent: React.FC<{ type: string }> = ({ type }) => {
+      return (
+        <>
+          <div className={CreateServer['changeAvatarWrapper']}>
+            <div>
+              <img
+                src={previewImage}
+                alt="Avatar"
+                className={CreateServer['changeAvatarPicture']}
+              />
+              <input
+                type="file"
+                id="avatar-upload"
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <label
+                htmlFor="avatar-upload"
+                style={{ marginTop: '10px' }}
+                className={Popup['button']}
+              >
+                更換頭像
+              </label>
             </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm font-medium text-gray-700 select-none">
-                  群組名稱
-                  <span className="text-red-500 ml-1">*</span>
-                </label>
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    value={newServer.name}
-                    onChange={(e) =>
-                      setNewSever((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    // disabled={!canCreateGroup}
-                    className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
-                      errors.name ? 'border-red-500' : 'border-gray-300'
-                    } `}
-                    // ${!canCreateGroup ? 'bg-gray-100 cursor-not-allowed' : ''}
-                    placeholder="請輸入群組名稱 (最多30字)"
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-xs text-red-500">{errors.name}</p>
-                  )}
-                </div>
+          </div>
+          <div className={CreateServer['inputGroup']}>
+            <div className={CreateServer['inputBox']}>
+              <div className={CreateServer['title']}>群組類型</div>
+              <div
+                className={`${CreateServer['inputBorder']} ${CreateServer['disabled']}`}
+              >
+                <input disabled value={type}></input>
               </div>
-
-              <div className="flex items-start gap-4">
-                <label className="w-24 text-right text-sm font-medium text-gray-700 pt-2 select-none">
-                  群組介紹
-                </label>
-                <div className="flex-1">
-                  <textarea
-                    value={newServer.description}
-                    onChange={(e) =>
-                      setNewSever((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                    // disabled={!canCreateGroup}
-                    className={`w-full p-2 border rounded-lg text-sm h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none ${
-                      errors.description ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    // ${!canCreateGroup ? 'bg-gray-100 cursor-not-allowed' : ''}
-                    placeholder="請輸入群組介紹 (最多200字)"
-                  />
-                  {errors.description && (
-                    <p className="mt-1 text-xs text-red-500">
-                      {errors.description}
-                    </p>
-                  )}
-                </div>
+            </div>
+            <div className={CreateServer['inputBox']}>
+              <div
+                className={`${CreateServer['title']} ${CreateServer['impotant']}`}
+              >
+                群組名稱
+              </div>
+              <div className={CreateServer['inputBorder']}>
+                <input
+                  type="text"
+                  value={newServer.name}
+                  onChange={(e) =>
+                    setNewSever((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                  // disabled={!canCreateGroup}
+                  placeholder="請輸入群組名稱 (最多30字)"
+                />
+                {errors.name && (
+                  <p className="mt-1 text-xs text-red-500">{errors.name}</p>
+                )}
+              </div>
+            </div>
+            <div className={CreateServer['inputBox']}>
+              <div className={CreateServer['title']}>群組介紹</div>
+              <div className={CreateServer['inputBorder']}>
+                <textarea
+                  value={newServer.description}
+                  onChange={(e) =>
+                    setNewSever((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  // disabled={!canCreateGroup}
+                  placeholder="請輸入群組介紹 (最多200字)"
+                />
+                {errors.description && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.description}
+                  </p>
+                )}
               </div>
             </div>
           </div>
-        </div>
+        </>
+      );
+    };
 
-        <div className="w-48 flex flex-col items-center select-none">
-          <div className="relative group">
-            <img
-              src={previewImage}
-              alt="Avatar"
-              className="w-32 h-32 rounded-lg border-2 border-gray-300 object-cover transition-all"
-            />
-            <input
-              type="file"
-              id="avatar-upload"
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageChange}
-              // disabled={!canCreateGroup}
-            />
-            <label
-              htmlFor="avatar-upload"
-              className={`mt-3 w-full px-4 py-2 rounded-lg text-sm font-medium transition-all border text-center block bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200 hover:border-blue-300 cursor-pointer`}
-              // ${canCreateGroup ? '' : 'bg-gray-100 text-gray-500 border-gray-300 cursor-not-allowed'}
+    return (
+      <div className={Popup['popupContainer']}>
+        <div className={Popup['popupMessageWrapper']}>
+          <div className={CreateServer['header']}>
+            <div className={CreateServer['headerButton']}>
+              <span data-key="60029">
+                {!serverType ? '選擇語音群類型' : '填寫群組資訊'}
+              </span>
+            </div>
+          </div>
+          <div className={Popup['popupBody']}>
+            <Suspense fallback={<div>Loading...</div>}>
+              {serverType ? (
+                <PageComponent type={serverType} />
+              ) : (
+                <>
+                  <div
+                    className={`${Popup['popupMessage']} ${CreateServer['message']}`}
+                  >
+                    <p data-key="30242">
+                      {errors.general
+                        ? errors.general
+                        : `您還可以創建${remainingGroups}個群，創建之後不能刪除或轉讓`}
+                    </p>
+                  </div>
+
+                  <label className={CreateServer['label']} data-key="60030">
+                    請您選擇語音群類型
+                  </label>
+
+                  <div
+                    className={`${CreateServer['buttonGroup']} ${
+                      !remainingGroups ? CreateServer['disabled'] : ''
+                    }`}
+                  >
+                    <div
+                      className={CreateServer['button']}
+                      onClick={(e) => {
+                        handleNextCreate(e);
+                      }}
+                      data-key="31001"
+                    >
+                      遊戲
+                    </div>
+                    <div
+                      className={CreateServer['button']}
+                      onClick={(e) => {
+                        handleNextCreate(e);
+                      }}
+                      data-key="31002"
+                    >
+                      娛樂
+                    </div>
+                    <div
+                      className={CreateServer['button']}
+                      onClick={(e) => {
+                        handleNextCreate(e);
+                      }}
+                      data-key="31000"
+                    >
+                      其他
+                    </div>
+                  </div>
+                </>
+              )}
+            </Suspense>
+          </div>
+          <div className={Popup['popupFooter']}>
+            <div
+              className={Popup['button']}
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+              data-key="30024"
             >
-              更換頭像
-            </label>
+              確認
+            </div>
+            <div className={Popup['button']} data-key="30024">
+              取消
+            </div>
           </div>
         </div>
       </div>
