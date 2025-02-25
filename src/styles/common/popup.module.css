@@ -9,6 +9,8 @@
   border: 1px solid #858585;
   background: url(../../../public/dialog_body_bg.png) no-repeat center center;
   background-size: cover;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .headerBox {
