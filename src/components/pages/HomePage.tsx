@@ -119,12 +119,7 @@ const Header: React.FC<HeaderProps> = React.memo(({ onSearch }) => {
   return (
     <>
       {showCreateServer && (
-        <CreateServerModal
-          onClose={() => setShowCreateServer(false)}
-          handleNextCreate={function (): void {
-            throw new Error('Function not implemented.');
-          }}
-        />
+        <CreateServerModal onClose={() => setShowCreateServer(false)} />
       )}
       <header className={styles['homeHeader']}>
         <div className={styles['left']}>

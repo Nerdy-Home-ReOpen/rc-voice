@@ -40,14 +40,7 @@ const Modal = React.memo(() => {
   const getMainContent = () => {
     switch (type) {
       case 'create-server':
-        return (
-          <CreateServerModal
-            onClose={() => {}}
-            handleNextCreate={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
-        );
+        return <CreateServerModal onClose={() => {}} />;
       case 'add-channel':
         return <AddChannelModal onClose={() => {}} isRoot={false} />;
       case 'server':
