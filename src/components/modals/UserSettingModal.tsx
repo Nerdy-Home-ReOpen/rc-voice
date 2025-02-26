@@ -199,7 +199,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({ onClose }) => {
           onClick: onClose,
         },
         {
-          label: '確認',
+          label: '確定',
           style: 'primary',
           type: 'submit',
           onClick: () => {},

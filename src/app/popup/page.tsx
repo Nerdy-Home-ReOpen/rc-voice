@@ -6,17 +6,22 @@ import React, { useEffect, useState } from 'react';
 // Components
 import Header from '@/components/Header';
 
+// Types
+import { Channel, Visibility } from '@/types';
+
 // Contexts
 import { useModal } from '@/context/modalContext';
 
 // Modals
 import CreateServerModal from '@/components/modals/CreateServerModal';
+import AddChannelModal from '@/components/modals/AddChannelModal';
+import DeleteChannelModal from '@/components/modals/DeleteChannelModal';
+import EditChannelModal from '@/components/modals/EditChannelModal';
 
 const Modal = React.memo(() => {
   const [type, setType] = useState<string | null>(null);
 
   useEffect(() => {
-    // if window has query
     if (window.location.search) {
       const params = new URLSearchParams(window.location.search);
       const type = params.get('type');
@@ -24,30 +29,61 @@ const Modal = React.memo(() => {
     }
   }, []);
 
-  const getTitle = () => {
+  const getTitle = (isCategory?: boolean) => {
+    if (type === 'edit-channel') {
+      return {
+        title: `編輯${isCategory ? '類別' : '頻道'}`,
+        button: ['close'],
+      };
+    }
     switch (type) {
       case 'create-server':
-        return 'Create Server';
-      case 'profile':
-        return 'Profile';
-      case 'server':
-        return 'Server';
+        return { title: '創建語音群', button: ['close'] };
+      case 'add-channel':
+        return { title: '創建頻道', button: ['close'] };
+      case 'del-channel':
+        return { title: '刪除頻道', button: ['close'] };
       default:
-        return '';
+        return undefined;
     }
   };
+
   const getMainContent = () => {
+    const mockChannel: Channel = {
+      id: 'default',
+      name: '',
+      isCategory: false,
+      settings: {
+        visibility: 'public',
+        bitrate: 0,
+        slowmode: false,
+        userLimit: 0,
+      },
+      isRoot: false,
+      isLobby: false,
+      voiceMode: 'free',
+      chatMode: 'free',
+      order: 0,
+      serverId: '',
+      createdAt: 0,
+    };
+
+    if (type === 'edit-channel') {
+      return <EditChannelModal onClose={() => {}} channel={mockChannel} />;
+    }
+
     switch (type) {
       case 'create-server':
         return <CreateServerModal onClose={() => {}} />;
-      case 'profile':
-      // return <FriendPage />;
-      case 'server':
-      // return <ServerPage />;
+      case 'add-channel':
+        return <AddChannelModal onClose={() => {}} isRoot={false} />;
+      case 'del-channel':
+        return <DeleteChannelModal onClose={() => {}} channel={mockChannel} />;
       default:
         return <></>;
     }
   };
+
   const getButtons = () => {};
 
   // if (!isOpen) return null;

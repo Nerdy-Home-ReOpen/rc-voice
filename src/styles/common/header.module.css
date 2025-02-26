@@ -1,23 +1,9 @@
 .header {
   display: flex;
-  justify-content: space-between;
-  -webkit-app-region: drag;
   background-color: #0073c6;
-  height: 40px;
-  padding: 0 10px 0 10px;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
-  align-items: center;
-}
-
-.header::before {
-  content: '';
-  display: inline-block;
-  min-width: 18px;
-  min-height: 18px;
-  background: url(../../../public/rc_logo_small.png) no-repeat center center;
-  background-size: auto;
+  -webkit-app-region: drag;
+  justify-content: space-between;
+  min-height: 30px;
 }
 
 .appIcon {
@@ -29,6 +15,34 @@
   vertical-align: middle;
   background-size: contain;
   left: 2.5rem;
+}
+
+.titleBox {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 16px;
+  width: auto;
+  color: #fff;
+}
+
+.titleBox::before {
+  content: '';
+  display: inline-block;
+  min-width: 18px;
+  min-height: 18px;
+  background: url(../../../public/rc_logo_small.png) no-repeat center center;
+  background-size: auto;
+}
+
+.big {
+  height: 40px;
+}
+
+.title {
+  margin-left: 5px;
+  font-size: 13px;
 }
 
 .buttons,
@@ -45,7 +59,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-left: 1rem;
+  margin-right: 0.5rem;
 }
 
 .gift {
@@ -355,14 +369,14 @@
 }
 
 .mainTabs .tab.selected .tabClose {
-  color:#0073c6;
+  color: #0073c6;
 }
 
 .mainTabs .tabClose {
   z-index: 1;
   position: absolute;
-  top:.3rem;
-  right:.3rem;
+  top: 0.3rem;
+  right: 0.3rem;
 }
 
 /* User Status */
@@ -375,6 +389,7 @@
   cursor: pointer;
   position: absolute;
   left: 2.5rem;
+  height: 40px;
 }
 
 .nameDisplay {
