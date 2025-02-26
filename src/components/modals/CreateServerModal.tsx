@@ -23,7 +23,7 @@ export const validateName = (name: string): string => {
 };
 export const validateDescription = (description: string): string => {
   if (!description?.trim()) return '';
-  if (description.length > 200) return '群組介紹不能超過200個字符';
+  if (description.length > 200) return '口號不能超過200個字符';
   return '';
 };
 
@@ -151,7 +151,7 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
           </div>
           <div className={CreateServer['inputGroup']}>
             <div className={CreateServer['inputBox']}>
-              <div className={CreateServer['title']}>群組類型</div>
+              <div className={CreateServer['title']}>群類型：</div>
               <div
                 className={`${CreateServer['inputBorder']} ${CreateServer['disabled']}`}
               >
@@ -162,7 +162,7 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
               <div
                 className={`${CreateServer['title']} ${CreateServer['impotant']}`}
               >
-                群組名稱
+                群名稱
               </div>
               <div className={CreateServer['inputBorder']}>
                 <input
@@ -175,7 +175,7 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
                     }))
                   }
                   // disabled={!canCreateGroup}
-                  placeholder="請輸入群組名稱 (最多30字)"
+                  placeholder="6-30個字元組成，首尾輸入的空格無效，不能包含不雅詞彙。"
                 />
                 {errors.name && (
                   <p className="mt-1 text-xs text-red-500">{errors.name}</p>
@@ -183,7 +183,7 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
               </div>
             </div>
             <div className={CreateServer['inputBox']}>
-              <div className={CreateServer['title']}>群組介紹</div>
+              <div className={CreateServer['title']}>口號</div>
               <div className={CreateServer['inputBorder']}>
                 <textarea
                   value={newServer.description}
@@ -194,7 +194,7 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
                     }))
                   }
                   // disabled={!canCreateGroup}
-                  placeholder="請輸入群組介紹 (最多200字)"
+                  placeholder="0-30個字元，口號是您建立團隊的目標"
                 />
                 {errors.description && (
                   <p className="mt-1 text-xs text-red-500">
@@ -214,7 +214,7 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
           <div className={CreateServer['header']}>
             <div className={CreateServer['headerButton']}>
               <span data-key="60029">
-                {!serverType ? '選擇語音群類型' : '填寫群組資訊'}
+                {!serverType ? '選擇語音群類型' : '填寫資料'}
               </span>
             </div>
           </div>

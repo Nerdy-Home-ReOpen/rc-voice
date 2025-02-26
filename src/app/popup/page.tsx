@@ -27,7 +27,7 @@ const Modal = React.memo(() => {
   const getTitle = () => {
     switch (type) {
       case 'create-server':
-        return 'Create Server';
+        return '創建語音群';
       case 'profile':
         return 'Profile';
       case 'server':
@@ -39,7 +39,14 @@ const Modal = React.memo(() => {
   const getMainContent = () => {
     switch (type) {
       case 'create-server':
-        return <CreateServerModal onClose={() => {}} />;
+        return (
+          <CreateServerModal
+            onClose={() => {}}
+            handleNextCreate={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        );
       case 'profile':
       // return <FriendPage />;
       case 'server':
