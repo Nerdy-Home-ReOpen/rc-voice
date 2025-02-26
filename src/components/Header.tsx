@@ -23,7 +23,9 @@ const Header: React.FC<HeaderProps> = React.memo(({ title, onClose }) => {
 
   return (
     <div className={styles['header']}>
-      {title && <div className={styles['title']}>{title}</div>}
+      <div className={styles['titleBox']}>
+        {title && <span className={styles['title']}>{title}</span>}
+      </div>
       <div className={styles['buttons']}>
         <div className={styles['minimize']} />
         <div

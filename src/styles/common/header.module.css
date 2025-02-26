@@ -1,14 +1,9 @@
 .header {
   display: flex;
-  justify-content: space-between;
-  -webkit-app-region: drag;
   background-color: #0073c6;
-  height: 40px;
-  padding: 0 10px 0 10px;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
-  align-items: center;
+  -webkit-app-region: drag;
+  justify-content: space-between;
+  min-height: 30px;
 }
 
 .header::before {
@@ -31,6 +26,20 @@
   left: 2.5rem;
 }
 
+.titleBox {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 16px;
+  width: 100%;
+  color: #fff;
+}
+
+.title {
+  font-size: 13px;
+}
+
 .buttons,
 .mainTabs,
 .userStatus {
@@ -45,7 +54,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-left: 1rem;
+  margin-right: 0.5rem;
 }
 
 .gift {
@@ -355,14 +364,14 @@
 }
 
 .mainTabs .tab.selected .tabClose {
-  color:#0073c6;
+  color: #0073c6;
 }
 
 .mainTabs .tabClose {
   z-index: 1;
   position: absolute;
-  top:.3rem;
-  right:.3rem;
+  top: 0.3rem;
+  right: 0.3rem;
 }
 
 /* User Status */
