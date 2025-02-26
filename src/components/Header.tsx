@@ -3,9 +3,14 @@ import React, { useState } from 'react';
 // CSS
 import styles from '@/styles/common/header.module.css';
 
-interface HeaderProps {
+interface TitleType {
   title?: string;
-  onClose?: () => void;
+  button?: Array<string>;
+}
+
+interface HeaderProps {
+  title?: TitleType;
+  onClose: () => void;
 }
 
 const Header: React.FC<HeaderProps> = React.memo(({ title, onClose }) => {
@@ -21,18 +26,24 @@ const Header: React.FC<HeaderProps> = React.memo(({ title, onClose }) => {
     }
   };
 
+  console.log(title);
+
   return (
     <div className={styles['header']}>
       <div className={styles['titleBox']}>
-        {title && <span className={styles['title']}>{title}</span>}
+        {title?.title && <span className={styles['title']}>{title.title}</span>}
       </div>
       <div className={styles['buttons']}>
-        <div className={styles['minimize']} />
-        <div
-          className={isFullscreen ? styles['restore'] : styles['maxsize']}
-          onClick={handleFullscreen}
-          aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-        />
+        {title?.button?.includes('minimize') && (
+          <div className={styles['minimize']} />
+        )}
+        {title?.button?.includes('maxsize') && (
+          <div
+            className={isFullscreen ? styles['restore'] : styles['maxsize']}
+            onClick={handleFullscreen}
+            aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          />
+        )}
         <div className={styles['close']} onClick={onClose} />
       </div>
     </div>

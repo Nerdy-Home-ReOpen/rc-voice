@@ -128,6 +128,8 @@ const Header: React.FC<HeaderProps> = React.memo(
 
     return (
       <div className={header['header']}>
+        {/* Title */}
+        <div className={`${header['titleBox']} ${header['big']}`}></div>
         {/* User Status */}
         <div className={header['userStatus']}>
           {showUserSetting && (

@@ -34,9 +34,11 @@ const Header: React.FC<HeaderProps> = React.memo(({ onClose }) => {
   };
 
   return (
-    <div className={`${header['header']}`}>
+    <div className={header['header']}>
       {/* Title */}
-      <div className={header['appIcon']} />
+      <div className={`${header['titleBox']} ${header['big']}`}>
+        <div className={header['appIcon']} />
+      </div>
       {/* Buttons */}
       <div className={header['buttons']}>
         <div className={header['minimize']} />
