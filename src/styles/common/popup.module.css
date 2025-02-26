@@ -125,6 +125,7 @@
   background: url(../../../public/pic_alert.png) no-repeat center center;
   vertical-align: middle;
   background-size: contain;
+  min-width: 36px;
 }
 
 .popupIconAlert {

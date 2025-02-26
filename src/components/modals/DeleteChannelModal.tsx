@@ -1,76 +1,62 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FormEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
-
-// Components
-import Modal from '@/components/Modal';
-
-// Types
 import { Channel } from '@/types';
-
-// Hooks
 import { useSocket } from '@/hooks/SocketProvider';
+import Dialog from '@/components/common/Dialog';
+
+import DeleteChannel from '../../styles/popups/deleteChannel.module.css';
+import Popup from '../../styles/common/popup.module.css';
 
 interface DeleteChannelModalProps {
   onClose: () => void;
   channel: Channel;
 }
 
-const DeleteChannelModal: React.FC<DeleteChannelModalProps> = React.memo(
-  ({ onClose, channel }) => {
-    // Redux
-    const sessionId = useSelector(
-      (state: { sessionToken: string }) => state.sessionToken,
+const DeleteChannelModal: React.FC<DeleteChannelModalProps> = ({
+  onClose,
+  channel,
+}) => {
+  const sessionId = useSelector(
+    (state: { sessionToken: string }) => state.sessionToken,
+  );
+  const socket = useSocket();
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: FormEvent<Element>) => {
+    e.preventDefault();
+    socket?.emit('deleteChannel', { sessionId, channelId: channel.id });
+    socket?.on('error', (error: { message: string }) =>
+      setError(error.message),
     );
+    onClose();
+  };
 
-    // Socket
-    const socket = useSocket();
-
-    // Error Control
-    const [error, setError] = useState('');
-
-    const handleSubmit = async (e: FormEvent<Element>) => {
-      e.preventDefault();
-      socket?.emit('deleteChannel', {
-        sessionId: sessionId,
-        channelId: channel.id,
-      });
-      socket?.on('error', (error: { message: string }) => {
-        setError(error.message);
-      });
-      onClose();
-    };
-
-    return (
-      <Modal
-        title={`刪除頻道`}
-        onSubmit={handleSubmit}
-        onClose={onClose}
-        width="auto"
-        height="auto"
-        buttons={[
-          {
-            label: '取消',
-            style: 'secondary',
-            onClick: onClose,
-          },
-          {
-            label: '確認',
-            style: 'danger',
-            type: 'submit',
-            onClick: () => {},
-          },
-        ]}
-      >
-        <div className="p-4">
-          <span className="text-red-500">
-            {'確定要刪除頻道 ' + channel.name + ' 嗎？此操作無法撤銷。'}
-          </span>
+  console.log('textBorder', DeleteChannel['textBorder']);
+  return (
+    <form className={Popup['popupContainer']} onSubmit={handleSubmit}>
+      <div className={Popup['popupMessageWrapper']}>
+        <div className={DeleteChannel['popupBody']}>
+          <Dialog
+            popupIcon="popupIconWarning"
+            textBorder={Popup['textBorder']}
+            title={`您確定要刪除頻道：${channel?.name} 嗎？`}
+            onSubmit={handleSubmit}
+            onClose={onClose}
+          />
         </div>
-      </Modal>
-    );
-  },
-);
+
+        <div className={Popup['popupFooter']}>
+          <button type="submit" className={Popup['button']}>
+            確定
+          </button>
+          <button type="button" className={Popup['button']} onClick={onClose}>
+            取消
+          </button>
+        </div>
+      </div>
+    </form>
+  );
+};
 
 DeleteChannelModal.displayName = 'DeleteChannelModal';
 

@@ -1,0 +1,8 @@
+.popupBody {
+  padding: 30px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
