@@ -12,6 +12,7 @@ import { useModal } from '@/context/modalContext';
 // Modals
 import CreateServerModal from '@/components/modals/CreateServerModal';
 import AddChannelModal from '@/components/modals/AddChannelModal';
+import DialogModal from '@/components/modals/DeleteChannelModal';
 
 const Modal = React.memo(() => {
   const [type, setType] = useState<string | null>(null);
@@ -31,20 +32,21 @@ const Modal = React.memo(() => {
         return { title: '創建語音群', button: ['close'] };
       case 'add-channel':
         return { title: '創建頻道', button: ['close'] };
-      case 'server':
-        return undefined;
+      case 'del-channel':
+        return { title: '刪除頻道', button: ['close'] };
       default:
         return undefined;
     }
   };
+  console.log(DialogModal);
   const getMainContent = () => {
     switch (type) {
       case 'create-server':
         return <CreateServerModal onClose={() => {}} />;
       case 'add-channel':
         return <AddChannelModal onClose={() => {}} isRoot={false} />;
-      case 'server':
-      // return <ServerPage />;
+      case 'del-channel':
+        return <DialogModal onClose={() => {}} channel={undefined} />;
       default:
         return <></>;
     }
