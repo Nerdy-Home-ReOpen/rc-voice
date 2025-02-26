@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { FormEvent, useState, Suspense } from 'react';
+import React, { FormEvent, useState, Suspense, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 // Hooks
@@ -27,23 +27,14 @@ export const validateDescription = (description: string): string => {
   return '';
 };
 
-interface FormErrors {
-  general?: string;
-  name?: string;
-  description?: string;
-}
-
 interface CreateServerModalProps {
   onClose: () => void;
-  handleNextCreate: () => void;
 }
 
 const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
   ({ onClose }) => {
-    // Next Page
-    const [serverType, setShowPage] = useState<string | false>(false);
-
     // Redux
+    const [serverType, setServerType] = useState<string | false>(false);
     const user = useSelector((state: { user: User | null }) => state.user);
     const sessionId = useSelector(
       (state: { sessionToken: string | null }) => state.sessionToken,
@@ -53,7 +44,7 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
     const socket = useSocket();
 
     // Form Control
-    const [newServer, setNewSever] = useState<Server>({
+    const [newServer, setNewServer] = useState<Server>({
       id: '',
       name: '',
       avatar: null,
@@ -75,219 +66,169 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
     });
 
     // Error Control
-    const [errors, setErrors] = useState<FormErrors>({});
-
-    const handleSubmit = async (e: FormEvent<Element>) => {
-      e.preventDefault();
-
-      console.log('Create Server:', newServer);
-      socket?.emit('createServer', {
-        sessionId: sessionId,
-        server: newServer,
-      });
-      socket?.on('error', (error: { message: string }) => {
-        setErrors({ general: error.message });
-      });
-      onClose();
-    };
+    const [errors, setErrors] = useState<{
+      general?: string;
+      name?: string;
+      description?: string;
+    }>({});
 
     // Image Preview
     const [previewImage, setPreviewImage] = useState<string>(
       '/logo_server_def.png',
     );
 
+    const handleChange = (field: keyof Server, value: string) => {
+      setNewServer((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const handleSubmit = async (e: FormEvent) => {
+      e.preventDefault();
+      console.log(newServer);
+      socket?.emit('createServer', { sessionId, server: newServer });
+      socket?.on('error', (error: { message: string }) =>
+        setErrors({ general: error.message }),
+      );
+      onClose();
+    };
+
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-      if (!file) {
-        alert('請選擇一張圖片');
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert('圖片大小不能超過5MB');
-        return;
-      }
-
+      if (!file || file.size > 5 * 1024 * 1024)
+        return alert('請選擇小於5MB的圖片');
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
-        setNewSever((prev) => ({ ...prev, avatar: reader.result as string }));
+        setNewServer((prev) => ({ ...prev, avatar: reader.result as string }));
       };
       reader.readAsDataURL(file);
     };
 
-    const handleNextCreate = (e: any) => {
-      setShowPage(e.currentTarget.textContent);
-    };
-
-    const maxGroups = 3;
-    const userOwnedServerCount = user?.ownedServers?.length ?? 0;
-    const remainingGroups = maxGroups - userOwnedServerCount;
-
-    const PageComponent: React.FC<{ type: string }> = ({ type }) => {
-      return (
-        <>
-          <div className={CreateServer['changeAvatarWrapper']}>
-            <div>
-              <img
-                src={previewImage}
-                alt="Avatar"
-                className={CreateServer['changeAvatarPicture']}
-              />
-              <input
-                type="file"
-                id="avatar-upload"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-              <label
-                htmlFor="avatar-upload"
-                style={{ marginTop: '10px' }}
-                className={Popup['button']}
-              >
-                更換頭像
-              </label>
-            </div>
-          </div>
-          <div className={CreateServer['inputGroup']}>
-            <div className={CreateServer['inputBox']}>
-              <div className={CreateServer['title']}>群類型：</div>
-              <div
-                className={`${CreateServer['inputBorder']} ${CreateServer['disabled']}`}
-              >
-                <input disabled value={type}></input>
-              </div>
-            </div>
-            <div className={CreateServer['inputBox']}>
-              <div
-                className={`${CreateServer['title']} ${CreateServer['impotant']}`}
-              >
-                群名稱
-              </div>
-              <div className={CreateServer['inputBorder']}>
-                <input
-                  type="text"
-                  value={newServer.name}
-                  onChange={(e) =>
-                    setNewSever((prev) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
-                  }
-                  // disabled={!canCreateGroup}
-                  placeholder="6-30個字元組成，首尾輸入的空格無效，不能包含不雅詞彙。"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-xs text-red-500">{errors.name}</p>
-                )}
-              </div>
-            </div>
-            <div className={CreateServer['inputBox']}>
-              <div className={CreateServer['title']}>口號</div>
-              <div className={CreateServer['inputBorder']}>
-                <textarea
-                  value={newServer.description}
-                  onChange={(e) =>
-                    setNewSever((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  // disabled={!canCreateGroup}
-                  placeholder="0-30個字元，口號是您建立團隊的目標"
-                />
-                {errors.description && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {errors.description}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </>
-      );
-    };
+    const maxGroups = 3,
+      remainingGroups = maxGroups - (user?.ownedServers?.length ?? 0);
 
     return (
       <div className={Popup['popupContainer']}>
         <div className={Popup['popupMessageWrapper']}>
           <div className={CreateServer['header']}>
             <div className={CreateServer['headerButton']}>
-              <span data-key="60029">
-                {!serverType ? '選擇語音群類型' : '填寫資料'}
-              </span>
+              <span>{serverType ? '填寫資料' : '選擇語音群類型'}</span>
             </div>
           </div>
           <div className={Popup['popupBody']}>
             <Suspense fallback={<div>Loading...</div>}>
               {serverType ? (
-                <PageComponent type={serverType} />
+                <>
+                  <div className={CreateServer['changeAvatarWrapper']}>
+                    <div>
+                      <img
+                        src={previewImage}
+                        alt="Avatar"
+                        className={CreateServer['changeAvatarPicture']}
+                      />
+                      <input
+                        type="file"
+                        id="avatar-upload"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                      <label
+                        htmlFor="avatar-upload"
+                        style={{ marginTop: '10px' }}
+                        className={Popup['button']}
+                      >
+                        更換頭像
+                      </label>
+                    </div>
+                  </div>
+                  <div className={Popup['inputGroup']}>
+                    <div className={Popup['inputBox']}>
+                      <div className={Popup['title']}>群類型：</div>
+                      <div
+                        className={`${Popup['inputBorder']} ${Popup['disabled']}`}
+                      >
+                        <input disabled value={serverType} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className={Popup['inputBox']}>
+                    <div className={`${Popup['title']} ${Popup['impotant']}`}>
+                      群名稱
+                    </div>
+                    <div className={Popup['inputBorder']}>
+                      <input
+                        type="text"
+                        value={newServer.name}
+                        onChange={(e) => handleChange('name', e.target.value)}
+                        placeholder="6-30個字元組成，首尾輸入的空格無效，不能包含不雅詞彙。"
+                        className={Popup['inputBorder']}
+                      />
+                    </div>
+                    {errors.name && (
+                      <p className="text-red-500">{errors.name}</p>
+                    )}
+                  </div>
+                  <div className={Popup['inputBox']}>
+                    <div className={Popup['title']}>口號</div>
+                    <div className={Popup['inputBorder']}>
+                      <textarea
+                        value={newServer.description}
+                        onChange={(e) =>
+                          handleChange('description', e.target.value)
+                        }
+                        placeholder="0-30個字元，口號是您建立團隊的目標"
+                        className={Popup['inputBorder']}
+                      />
+                    </div>
+                    {errors.description && (
+                      <p className="text-red-500">{errors.description}</p>
+                    )}
+                  </div>
+                </>
               ) : (
                 <>
                   <div
                     className={`${Popup['popupMessage']} ${CreateServer['message']}`}
                   >
-                    <p data-key="30242">
-                      {errors.general
-                        ? errors.general
-                        : `您還可以創建${remainingGroups}個群，創建之後不能刪除或轉讓`}
+                    <p>
+                      {errors.general ||
+                        `您還可以創建${remainingGroups}個群，創建之後不能刪除或轉讓`}
                     </p>
                   </div>
-
                   <label className={CreateServer['label']} data-key="60030">
                     請您選擇語音群類型
                   </label>
-
-                  <div
-                    className={`${CreateServer['buttonGroup']} ${
-                      !remainingGroups ? CreateServer['disabled'] : ''
-                    }`}
-                  >
-                    <div
-                      className={CreateServer['button']}
-                      onClick={(e) => {
-                        handleNextCreate(e);
-                      }}
-                      data-key="31001"
-                    >
-                      遊戲
-                    </div>
-                    <div
-                      className={CreateServer['button']}
-                      onClick={(e) => {
-                        handleNextCreate(e);
-                      }}
-                      data-key="31002"
-                    >
-                      娛樂
-                    </div>
-                    <div
-                      className={CreateServer['button']}
-                      onClick={(e) => {
-                        handleNextCreate(e);
-                      }}
-                      data-key="31000"
-                    >
-                      其他
-                    </div>
+                  <div className={CreateServer['buttonGroup']}>
+                    {['遊戲', '娛樂', '其他'].map((type) => (
+                      <div
+                        key={type}
+                        className={`${CreateServer['button']} ${
+                          !remainingGroups ? Popup['disabled'] : ''
+                        }`}
+                        onClick={() => setServerType(type)}
+                      >
+                        {type}
+                      </div>
+                    ))}
                   </div>
                 </>
               )}
             </Suspense>
           </div>
           <div className={Popup['popupFooter']}>
-            <div
-              className={Popup['button']}
-              onClick={(e) => {
-                handleSubmit(e);
-              }}
-              data-key="30024"
-            >
-              確認
-            </div>
-            <div className={Popup['button']} data-key="30024">
+            {serverType && (
+              <button
+                className={`${Popup['button']} ${
+                  !newServer.name.trim() ? Popup['disabled'] : ''
+                }`}
+                onClick={handleSubmit}
+              >
+                確認
+              </button>
+            )}
+            <button className={Popup['button']} onClick={onClose}>
               取消
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -296,5 +237,4 @@ const CreateServerModal: React.FC<CreateServerModalProps> = React.memo(
 );
 
 CreateServerModal.displayName = 'CreateServerModal';
-
 export default CreateServerModal;

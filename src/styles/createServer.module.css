@@ -54,51 +54,6 @@
   text-align: center;
 }
 
-.inputBox {
-  font-size: 13px;
-  margin: 5;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 2px;
-  margin-top: 2px;
-}
-
-.inputBox .title {
-  font-size: 13px;
-  width: 5rem;
-}
-
-.inputBox .title.impotant:after {
-  content: '*';
-  color: red;
-}
-
-.inputBorder {
-  border: 1px solid #ddd;
-  padding-top: 0;
-  padding-bottom: 0;
-  background: #fff;
-  position: relative;
-  display: inline-block;
-  font-size: 13px;
-  width: 100%;
-}
-
-.inputBorder input,
-.inputBorder textarea {
-  padding: 3px;
-  border: 1px solid #ffffff;
-  outline: none;
-  font-size: 12px;
-  width: 100%;
-  font-family: 'SimSun', sans-serif;
-  background: #fff;
-  color: #000;
-  height: 100%;
-  resize: none;
-}
-
 .changeAvatarWrapper {
   display: flex;
   justify-content: center;
@@ -110,10 +65,4 @@
 
 .changeAvatarPicture {
   max-height: 100px;
-}
-
-.disabled div,
-.disabled input {
-  color: #8f8f8f;
-  pointer-events: none;
 }
