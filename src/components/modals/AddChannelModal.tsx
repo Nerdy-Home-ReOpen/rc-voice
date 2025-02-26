@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 import React, { FormEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -6,10 +6,14 @@ import { useSelector } from 'react-redux';
 import Modal from '@/components/Modal';
 
 // Types
-import { Channel, Server, Visibility } from '@/types';
+import { Channel, Server } from '@/types';
 
 // Hooks
 import { useSocket } from '@/hooks/SocketProvider';
+
+// CSS
+import Popup from '../../styles/common/popup.module.css';
+import AddChannel from '../../styles/addChannel.module.css';
 
 interface AddChannelModalProps {
   onClose: () => void;
@@ -33,10 +37,10 @@ const AddChannelModal: React.FC<AddChannelModalProps> = React.memo(
       name: '',
       isLobby: false,
       isCategory: false,
-      isRoot: isRoot,
-      serverId: server.id,
-      voiceMode: 'free' as Channel['voiceMode'],
-      chatMode: 'free' as Channel['chatMode'],
+      isRoot,
+      serverId: server?.id || '',
+      voiceMode: 'free',
+      chatMode: 'free',
       order: 0,
       settings: {
         bitrate: 0,
@@ -50,80 +54,69 @@ const AddChannelModal: React.FC<AddChannelModalProps> = React.memo(
     // Error Control
     const [error, setError] = useState<string>('');
 
-    const handleSubmit = async (e: FormEvent<Element>) => {
+    const handleSubmit = (e: FormEvent) => {
       e.preventDefault();
+      console.log(newChannel);
       socket?.emit('createChannel', {
-        sessionId: sessionId,
+        sessionId,
         serverId: server.id,
         channel: newChannel,
       });
-      socket?.on('error', (error: { message: string }) => {
-        setError(error.message);
-      });
+      socket?.on('error', (err: { message: string }) => setError(err.message));
       onClose();
     };
 
     return (
-      <Modal
-        title="新增頻道"
-        onSubmit={handleSubmit}
-        onClose={onClose}
-        width="300px"
-        height="auto"
-        buttons={[
-          {
-            label: '取消',
-            style: 'secondary',
-            onClick: onClose,
-          },
-          {
-            label: '確認',
-            style: 'primary',
-            type: 'submit',
-            onClick: () => {},
-          },
-        ]}
-      >
-        <div className="p-4 space-y-4">
-          <input
-            type="text"
-            value={newChannel.name}
-            onChange={(e) =>
-              setNewChannel((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
-            className="w-full p-1 border rounded"
-            placeholder="頻道名稱"
-            required
-          />
-          <select
-            value={newChannel.settings.visibility}
-            onChange={(e) =>
-              setNewChannel((prev) => {
-                const settings = prev.settings;
-                return {
-                  ...prev,
-                  settings: {
-                    ...settings,
-                    visibility: e.target.value as Visibility,
-                  },
-                };
-              })
-            }
-            className="w-full p-1 border rounded"
-          >
-            <option value="public">公開</option>
-            <option value="private">會員</option>
-            <option value="readonly">唯讀</option>
-          </select>
+      <form className={Popup['popupContainer']} onSubmit={handleSubmit}>
+        <div className={Popup['popupMessageWrapper']}>
+          <div className={AddChannel['popupBody']}>
+            <div className={Popup['inputGroup']}>
+              <div className={Popup['inputBox']}>
+                <div className={Popup['title']}>上級頻道</div>
+                <div className={Popup['textBorder']}>
+                  <div className={Popup['title']}>123</div>
+                </div>
+              </div>
+            </div>
+            <div className={Popup['inputGroup']}>
+              <div className={Popup['inputBox']}>
+                <div className={Popup['title']}>頻道名稱</div>
+                <div className={Popup['inputBorder']}>
+                  <input
+                    type="text"
+                    value={newChannel.name}
+                    onChange={(e) =>
+                      setNewChannel((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
+                    required
+                    className={Popup['inputBorder']}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={Popup['popupFooter']}>
+            <button
+              type="submit"
+              className={`${Popup['button']} ${
+                !newChannel.name.trim() ? Popup['disabled'] : ''
+              }`}
+              disabled={!newChannel.name.trim()}
+            >
+              確認
+            </button>
+            <button type="button" className={Popup['button']} onClick={onClose}>
+              取消
+            </button>
+          </div>
         </div>
-      </Modal>
+      </form>
     );
   },
 );
 
 AddChannelModal.displayName = 'AddChannelModal';
-
 export default AddChannelModal;
