@@ -13,7 +13,7 @@ import { useSocket } from '@/hooks/SocketProvider';
 
 // CSS
 import Popup from '../../styles/common/popup.module.css';
-import AddChannel from '../../styles/addChannel.module.css';
+import AddChannel from '../../styles/popups/addChannel.module.css';
 
 interface AddChannelModalProps {
   onClose: () => void;
