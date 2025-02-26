@@ -57,7 +57,7 @@ const EditChannelModal: React.FC<EditChannelModalProps> = React.memo(
             onClick: onClose,
           },
           {
-            label: '確認',
+            label: '確定',
             style: 'primary',
             type: 'submit',
             onClick: () => {},

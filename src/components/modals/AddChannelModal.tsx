@@ -106,7 +106,7 @@ const AddChannelModal: React.FC<AddChannelModalProps> = React.memo(
               }`}
               disabled={!newChannel.name.trim()}
             >
-              確認
+              確定
             </button>
             <button type="button" className={Popup['button']} onClick={onClose}>
               取消
