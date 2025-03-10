@@ -487,7 +487,7 @@ const serverHandler = {
       });
 
       // Create member
-      await Set.member(`mb_${user.id}-${server.id}`, {
+      await Set.member(`mb_${userId}-${serverId}`, {
         permissionLevel: 6,
         nickname: user.name,
         serverId: serverId,
@@ -541,6 +541,8 @@ const serverHandler = {
     const users = (await db.get('users')) || {};
     const servers = (await db.get('servers')) || {};
     const members = (await db.get('members')) || {};
+
+    console.log('updateServer');
 
     let uploadedFilePath = null;
 

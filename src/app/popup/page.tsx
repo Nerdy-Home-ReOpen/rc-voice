@@ -28,15 +28,16 @@ const Modal = React.memo(() => {
   useEffect(() => {
     if (window.location.search) {
       const params = new URLSearchParams(window.location.search);
-      const type = params.get('type') as popupType;
-      setType(type);
+      const newType = params.get('type') as popupType;
+      setType(newType);
+
+      if (newType) {
+        ipcService.initialData.request(newType, (data) => {
+          setInitialData(data);
+        });
+      }
     }
   }, []);
-
-  useEffect(() => {
-    if (!type) return;
-    ipcService.initialData.request(type, (data) => setInitialData(data));
-  }, [type]);
 
   const getTitle = (isCategory?: boolean) => {
     switch (type) {
@@ -96,7 +97,7 @@ const Modal = React.memo(() => {
       case popupType.CREATE_SERVER:
         return <CreateServerModal onClose={() => {}} />;
       case popupType.EDIT_SERVER:
-        return <EditServerModal onClose={() => {}} />;
+        return <EditServerModal {...initialData} />;
       case popupType.DELETE_SERVER:
         return; // This one doesn't exist :D
       case popupType.CREATE_CHANNEL:

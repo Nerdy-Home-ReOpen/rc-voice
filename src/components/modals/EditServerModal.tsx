@@ -46,17 +46,14 @@ interface SortState {
 type SortFunction = (a: Member, b: Member, direction: number) => number;
 
 interface ServerSettingModalProps {
-  onClose: () => void;
+  server: Server;
 }
 
-const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
-  ({ onClose }) => {
+const EditServerModal: React.FC<ServerSettingModalProps> = React.memo(
+  (initialData: ServerSettingModalProps) => {
+    const { server } = initialData;
     // Redux
-    const server = useSelector((state: { server: Server }) => state.server);
-    const mainUser = useSelector((state: { user: User }) => state.user);
-    const sessionId = useSelector(
-      (state: { sessionToken: string }) => state.sessionToken,
-    );
+    // const mainUser = useSelector((state: { user: User }) => state.user);
 
     // Socket Control
     const socket = useSocket();
@@ -171,7 +168,7 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
     };
 
     useEffect(() => {
-      if (!socket || !sessionId) return;
+      if (!socket) return;
 
       return;
       // 這裡需修改 先return處理
@@ -214,7 +211,7 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
       //     socket.off('applications', handleApplications);
       //   };
       // }
-    }, [activeTabIndex, socket, sessionId, server?.id]);
+    }, [activeTabIndex, socket, server?.id]);
 
     const handleMemberContextMenu = (e: React.MouseEvent, member: any) => {
       e.preventDefault();
@@ -350,23 +347,23 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
 
         // Check if there are any updates
         if (Object.keys(updates).length === 0 && !pendingIconFile) {
-          onClose();
+          // onClose();
           return;
         }
 
         // Emit all updates together
-        socket?.updateServer(updates);
+        socket?.send.updateServer(updates);
 
         // Update original state after successful emission
         setOriginalServerData({
           ...editingServerData,
           announcement: markdownContent,
         });
-        onClose();
+        // onClose();
       } catch (error) {
         console.error('Failed to update server:', error);
       }
-    }, [editingServerData, markdownContent, pendingIconFile, server, onClose]);
+    }, [editingServerData, markdownContent, pendingIconFile, server]);
 
     const findDifferencesDeep = (
       obj1: Record<string, any>,
@@ -493,7 +490,7 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
                             className={`${EditServer['serverSettingInput']} ${
                               errors?.name ? 'border-red-500' : ''
                             }`}
-                            value={editingServerData?.name}
+                            value={editingServerData?.name ?? server?.name}
                             onChange={(e) => {
                               const newName = e.target.value;
                               setEditingServerData({
@@ -538,7 +535,7 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
                         <div className={EditServer['serverSettingInputBorder']}>
                           <input
                             className={EditServer['serverSettingInput']}
-                            value={editingServerData.slogan || ''}
+                            value={editingServerData.slogan ?? server?.slogan}
                             onChange={(e) => {
                               setEditingServerData({
                                 ...editingServerData,
@@ -679,7 +676,10 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
                       <div className={EditServer['serverSettingInputBorder']}>
                         <input
                           className={EditServer['serverSettingInput']}
-                          value={editingServerData.description}
+                          value={
+                            editingServerData?.description ??
+                            server?.description
+                          }
                           onChange={(e) => {
                             const newDescription = e.target.value;
                             setEditingServerData({
@@ -1377,7 +1377,6 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
           return null;
       }
     };
-    console.log(123);
 
     return (
       <>
@@ -1443,7 +1442,7 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
             <button type="submit" className={Popup['button']}>
               確定
             </button>
-            <button type="button" className={Popup['button']} onClick={onClose}>
+            <button type="button" className={Popup['button']}>
               取消
             </button>
           </div>
@@ -1453,5 +1452,5 @@ const EditChannelModal: React.FC<ServerSettingModalProps> = React.memo(
   },
 );
 
-EditChannelModal.displayName = 'EditChannelModal';
-export default EditChannelModal;
+EditServerModal.displayName = 'EditServerModal';
+export default EditServerModal;

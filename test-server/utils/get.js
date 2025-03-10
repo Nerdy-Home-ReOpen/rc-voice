@@ -29,9 +29,16 @@ const get = {
   },
   userMembers: async (userId) => {
     const members = (await db.get('members')) || {};
+    const servers = (await db.get('servers')) || {};
     return Object.values(members)
       .filter((member) => member.userId === userId)
-      .reduce((acc, member) => ({ ...acc, [member.serverId]: member }), {});
+      .reduce(
+        (acc, member) => ({
+          ...acc,
+          [member.serverId]: { ...member, server: servers[member.serverId] },
+        }),
+        {},
+      );
   },
   userFriends: async (userId) => {
     const friends = (await db.get('friends')) || {};
@@ -103,9 +110,16 @@ const get = {
   },
   serverMembers: async (serverId) => {
     const members = (await db.get('members')) || {};
+    const users = (await db.get('users')) || {};
     return Object.values(members)
       .filter((member) => member.serverId === serverId)
-      .reduce((acc, member) => ({ ...acc, [member.userId]: member }), {});
+      .reduce(
+        (acc, member) => ({
+          ...acc,
+          [member.userId]: { ...member, user: users[member.userId] },
+        }),
+        {},
+      );
   },
   serverApplications: async (serverId) => {
     const serverApplications = (await db.get('serverApplications')) || {};

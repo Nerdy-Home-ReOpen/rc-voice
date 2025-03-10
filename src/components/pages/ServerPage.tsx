@@ -18,7 +18,14 @@ import ServerSettingModal from '@/components/modals/EditServerModal';
 import UserSettingModal from '@/components/modals/UserSettingModal';
 
 // Types
-import type { User, Server, Message, Permission, Channel } from '@/types';
+import {
+  popupType,
+  type User,
+  type Server,
+  type Message,
+  type Permission,
+  type Channel,
+} from '@/types';
 
 // Socket
 import { useSocket } from '@/providers/SocketProvider';
@@ -161,14 +168,18 @@ const ServerPageComponent: React.FC = () => {
     });
   }, [serverName, serverUserCount]);
 
+  const handleOpenServerSettings = () => {
+    ipcService.popup.open(popupType.EDIT_SERVER, 450, 600);
+    ipcService.initialData.onRequest(popupType.EDIT_SERVER, {
+      server: server,
+    });
+  };
+
   return (
     <div className={styles['serverWrapper']}>
       <div className={styles['serverContent']}>
         {showUserSetting && (
           <UserSettingModal onClose={() => setShowUserSetting(false)} />
-        )}
-        {showServerSetting && (
-          <ServerSettingModal onClose={() => setShowServerSetting(false)} />
         )}
         {/* Left Sidebar */}
         <div
@@ -202,7 +213,7 @@ const ServerPageComponent: React.FC = () => {
               <div className={styles['saperator']} />
               <div
                 className={styles['setting']}
-                onClick={() => setShowServerSetting(true)}
+                onClick={handleOpenServerSettings}
               />
             </div>
           </div>
