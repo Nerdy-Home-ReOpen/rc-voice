@@ -300,6 +300,8 @@ export interface Translation {
   taiwan: string;
   wealthValue: string;
   addFriendSubGroups: string;
+  getHelp: string;
+  discord: string;
 }
 
 export type LanguageKey = 'tw' | 'cn' | 'en' | 'jp';
@@ -612,6 +614,8 @@ export const translations: Record<LanguageKey, Translation> = {
     taiwan: '台灣',
     wealthValue: '0',
     addFriendSubGroups: '請填寫分組名稱',
+    getHelp: '獲得協助',
+    discord: 'Discord',
   },
   cn: {
     RPCHomePage: '正在浏览主页',
@@ -920,6 +924,8 @@ export const translations: Record<LanguageKey, Translation> = {
     taiwan: '台湾',
     wealthValue: '0',
     addFriendSubGroups: '请输入分组名称',
+    getHelp: 'Get Help',
+    discord: 'Discord',
   },
   en: {
     RPCHomePage: 'Browsing Homepage',
@@ -1244,6 +1250,8 @@ export const translations: Record<LanguageKey, Translation> = {
     taiwan: 'Taiwan',
     wealthValue: '0',
     addFriendSubGroups: 'Please fill in the subgroup name',
+    getHelp: 'Get Help',
+    discord: 'Discord',
   },
   jp: {
     RPCHomePage: 'ホームページを閲覧中',
@@ -1566,6 +1574,8 @@ export const translations: Record<LanguageKey, Translation> = {
     taiwan: '台湾',
     wealthValue: '0',
     addFriendSubGroups: 'サブグループ名を記入してください',
+    getHelp: 'ヘルプを取得',
+    discord: 'Discord',
   },
 };
 

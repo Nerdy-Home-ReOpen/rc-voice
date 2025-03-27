@@ -227,9 +227,26 @@ const SettingModal: React.FC = React.memo(() => {
             <div className={popup['col']}>
               <div className={popup['label']}>{lang.tr.aboutUs}</div>
               <div className={popup['inputGroup']}>
-                <div className={`${popup['inputBox']} ${popup['col']}`}>
-                  <div className={popup['label']}>{lang.tr.version}</div>
-                  <div className={popup['value']}>v{version}</div>
+                <div className={popup['row']}>
+                  <div className={`${popup['inputBox']} ${popup['col']}`}>
+                    <div className={popup['label']}>{lang.tr.version}</div>
+                    <div className={popup['value']}>v{version}</div>
+                  </div>
+                  <div className={`${popup['inputBox']} ${popup['col']}`}>
+                    <div className={popup['label']}>{lang.tr.getHelp}</div>
+                    <div className={popup['value']}>
+                      <div
+                        onClick={() =>
+                          ipcService.window.openExternal(
+                            'https://discord.gg/adCWzv6wwS',
+                          )
+                        }
+                        className="text-blue-500 hover:text-blue-700 transition-colors hover:underline cursor-pointer"
+                      >
+                        {lang.tr.discord}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className={`${popup['inputBox']} ${popup['col']}`}>
