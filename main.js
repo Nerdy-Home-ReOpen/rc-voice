@@ -127,7 +127,7 @@ let authWindow = null;
 let popups = {};
 
 // Socket connection
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
+const WS_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 let socketInstance = null;
 
 // Discord RPC

@@ -316,7 +316,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 5;
+  padding: 5px;
   border-radius: 3px;
 }
 

@@ -128,7 +128,7 @@
 
 .noteText {
   text-align: right;
-  margin-top: 3;
+  margin-top: 3px;
 }
 
 .inputBoxDropDownIcon {
@@ -161,7 +161,7 @@
   background: url(../../../public/channel/channel_search.png);
   background-size: cover;
   background-position: 0 0;
-  margin-left: 5;
+  margin-left: 5px;
 }
 
 .searchBorder:hover:not(:has(.searchPrev:hover, .searchNext:hover))

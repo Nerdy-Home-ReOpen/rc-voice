@@ -1,6 +1,6 @@
 {
   "appId": "com.null.rcvoice",
-  "productName": "RC-Voice",
+  "productName": "RiceCall",
   "copyright": "Copyright © 2025 null",
   "directories": {
     "output": "dist"
@@ -12,7 +12,14 @@
   ],
   "asar": true,
   "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+  "extraFiles": [
+    {
+      "from": ".env",
+      "to": ".env"
+    }
+  ],
   "win": {
+    "icon": "./resources/icon.ico",
     "target": [
       "nsis",
       "portable"
@@ -25,6 +32,7 @@
     "artifactName": "${productName}-${version}-${os}-${arch}-Setup.${ext}"
   },
   "mac": {
+    "icon": "./resources/icon.icns",
     "category": "public.app-category.social-networking",
     "target": [
         "dmg",
@@ -32,6 +40,7 @@
     ]
   },
   "linux": {
+    "icon": "./resources/icon.png",
     "category": "Network",
     "target": [
         "AppImage",

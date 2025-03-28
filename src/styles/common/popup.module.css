@@ -174,7 +174,7 @@
   border: 1px solid #ccc;
   border-right: 0;
   border-top: 0;
-  padding-left: 5;
+  padding-left: 5px;
   text-align: left;
   height: 28px;
   font-weight: unset;
@@ -194,7 +194,7 @@
   border: 1px solid #ccc;
   border-right: 0;
   border-top: 0;
-  padding-left: 5;
+  padding-left: 5px;
   display: flex;
   align-items: center;
 }
